@@ -1,0 +1,24 @@
+#game #sky {
+  background-color: blue;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 200px;
+}
+#game #floor {
+  background-color: green;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 200px;
+}
+#game #player {
+  background-color: red;
+  position: absolute;
+  bottom: 200px;
+  left: 200px;
+  height: 100px;
+  width: 50px;
+}
