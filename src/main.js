@@ -1,115 +1,150 @@
 (function ($, _, window, document) {
-    "use strict";
+    'use strict';
+
+    // game loop based on http://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing
+    function Game(render, simulate, maxFPS, catchUp) {
+        maxFPS = maxFPS || 60;
+        catchUp = catchUp || _.noop();
+
+        var lastTimestamp = 0,
+            accDelta = 0,
+            fixedDelta = 1000 / maxFPS;
+
+        requestAnimationFrame(function (timestamp) {
+            lastTimestamp = timestamp;
+        });
+
+        function loop(timestamp) {
+            // make sure the simulation runs in fixed time, independent of frame rate
+            accDelta += timestamp - lastTimestamp;
+            while (accDelta >= fixedDelta) {
+                simulate(accDelta);
+                accDelta -= fixedDelta;
+                // panic if the simulation falls too far behind
+                if (accDelta / fixedDelta >= 200) {
+                    catchUp();
+                    accDelta = 0;
+                }
+            }
+
+            // call render with delta from last render
+            render(timestamp - lastTimestamp);
+
+            // request new frame
+            lastTimestamp = timestamp;
+            requestAnimationFrame(loop);
+        }
+
+        requestAnimationFrame(loop)
+    }
 
     var UP = 87,
         LEFT = 65,
         RIGHT = 68,
         JUMP = 32,
-        FUNCTION_KEYS = [UP, LEFT, RIGHT, JUMP];
+        FUNCTION_KEYS = [UP, LEFT, RIGHT, JUMP],
+        VIEWPORT = { x: $('body').width(), y: $('body').height()};
 
-    var FLOOR = $("#floor").height(),
-        LOOP = 50,
-        ACCELERATION = 0.5,
-        FALL_ACCELERATION = 0.2,
-        MAX_X = 10,
-        MAX_Y = 50;
+    var FLOOR = $('#floor').height(),
+        ACCELERATION = 0.05,
+        FALL_ACCELERATION = 0.02,
+        MAX_X = 1,
+        MAX_Y = 5;
 
-    var player = $("#player"),
+    var player = $('#player'),
         velocity = { x: 0, y: 0 },
-        falling = false,
-        top_offset = player.offset().top;
+        playerPos = { x: FLOOR, y: FLOOR },
+        falling = false;
 
-    var pressed = [];
+    var pressedKeys = [];
 
-    $(document).ready(function () {
-        $(document).on("keydown", function (e) {
-            if (!_.some(pressed, function (k) { return k === e.which }) && _.some(FUNCTION_KEYS, function (k) { return k === e.which })) {
-                pressed.push(e.which);
-                e.preventDefault();
-            }
-        });
-
-        $(document).on("keyup", function (e) {
-            _.remove(pressed, function(k) { return k === e.which });
-        });
-
-        // main game loop
-        selfAdjustingInterval(function (delta) {
-            var moving_x = false,
-                jumping = false;
-
-            _.forEach(pressed, function (key) {
-                switch (key) {
-                    case RIGHT:
-                        velocity.x = Math.min(velocity.x + ACCELERATION * delta, MAX_X);
-                        moving_x = true;
-                        break;
-                    case LEFT:
-                        velocity.x = Math.max(velocity.x - ACCELERATION * delta, -MAX_X);
-                        moving_x = true;
-                        break;
-                    case UP:
-                    case JUMP:
-                        if (!falling && velocity.y < MAX_Y) {
-                            velocity.y = Math.min(velocity.y + ACCELERATION * delta, MAX_Y);
-                            jumping = true;
-                        } else {
-                            falling = true;
-                            _.remove(pressed, function (k) { return k === UP || k === JUMP });
-                        }
-                        break;
-                    default:
-                        _.remove(pressed, function(k) { return k === key })
+    function init() {
+        $(document).ready(function () {
+            $(document).on('keydown', function (e) {
+                if (!_.some(pressedKeys, function (k) { return k === e.which }) && _.some(FUNCTION_KEYS, function (k) { return k === e.which })) {
+                    pressedKeys.push(e.which);
+                    e.preventDefault();
                 }
             });
 
-            if (pressed.length || falling) {
-                if (!moving_x) {
-                    velocity.x = 0;
-                }
+            $(document).on('keyup', function (e) {
+                _.remove(pressedKeys, function(k) { return k === e.which });
+            });
 
-                if (velocity.y > 0 && !jumping) {
-                    falling = true;
-                }
+            Game(render, simulate);
+        });
+    }
 
-                if (falling) {
-                    if (player.offset().top - velocity.y > top_offset) {
-                        player.css({'bottom': "" + FLOOR + "px"});
-                        velocity.y = 0;
-                        falling = false;
+    function simulate(delta) {
+        handleInput(delta);
+    }
+
+    function render() {
+        player.css({
+            left: '' + (playerPos.x) + 'px',
+            bottom: '' + (playerPos.y) + 'px'
+        });
+    }
+    
+    function handleInput(delta) {
+        var movingX = false,
+            jumping = false;
+
+        _.forEach(pressedKeys, function (key) {
+            switch (key) {
+                case RIGHT:
+                    velocity.x = Math.min(velocity.x + ACCELERATION * delta, MAX_X);
+                    movingX = true;
+                    break;
+                case LEFT:
+                    velocity.x = Math.max(velocity.x - ACCELERATION * delta, -MAX_X);
+                    movingX = true;
+                    break;
+                case UP:
+                case JUMP:
+                    if (!falling && velocity.y < MAX_Y) {
+                        velocity.y = Math.min(velocity.y + ACCELERATION * delta, MAX_Y);
+                        jumping = true;
                     } else {
-                        velocity.y = Math.max(velocity.y - FALL_ACCELERATION * delta, -MAX_Y);
+                        falling = true;
+                        _.remove(pressedKeys, function (k) { return k === UP || k === JUMP });
                     }
-                }
-
-                move(velocity.x, velocity.y);
+                    break;
+                default:
+                    _.remove(pressedKeys, function(k) { return k === key })
             }
-        }, LOOP);
-    });
+        });
 
-    function move(x, y) {
-        player.animate({
-            'left': "+=" + x + "px",
-            'bottom': "+=" + y + "px"
-        }, LOOP, "linear")
-    }
+        if (pressedKeys.length || falling) {
+            if (!movingX) {
+                velocity.x = 0;
+            }
 
-    // https://www.sitepoint.com/creating-accurate-timers-in-javascript/
-    function selfAdjustingInterval(callback, interval) {
-        var start = new Date().getTime(),
-            time = 0;
+            if (velocity.y > 0 && !jumping) {
+                falling = true;
+            }
 
-        function go() {
-            time += interval;
-
-            var diff = (new Date().getTime() - start) - time;
-
-            callback(interval + diff);
-
-            window.setTimeout(go, (interval - diff));
+            if (falling) {
+                velocity.y = Math.max(velocity.y - FALL_ACCELERATION * delta, -MAX_Y);
+            }
         }
-
-        window.setTimeout(go, interval)
+        
+        move(delta);
     }
+    
+    function move(delta) {
+        playerPos.x = clampBetween(playerPos.x + velocity.x * delta, 0, VIEWPORT.x);
+        playerPos.y = clampBetween(playerPos.y + velocity.y * delta, FLOOR, VIEWPORT.y);
+        if (playerPos.y <= FLOOR) {
+            velocity.y = FLOOR;
+            falling = false;
+        }
+    }
+
+    function clampBetween(num, min, max) {
+        return Math.min(Math.max(num, min), max);
+    }
+
+    init();
 
 })($, _, window, document);
