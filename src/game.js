@@ -3,20 +3,23 @@
 
     // KEYS
     var UP = 87,
+        UP_ARROW = 38,
         LEFT = 65,
+        LEFT_ARROW = 37,
         RIGHT = 68,
-        JUMP = 32,
-        FUNCTION_KEYS = [UP, LEFT, RIGHT, JUMP];
+        RIGHT_ARROW = 39,
+        SPACE = 32,
+        FUNCTION_KEYS = [UP, UP_ARROW, LEFT, LEFT_ARROW, RIGHT, RIGHT_ARROW, SPACE];
 
     // DIMENSIONS
     var FLOOR = null,
         VIEWPORT = { x: 0, y: 0};
 
     // PHYSICS
-    var ACCELERATION = 0.05,
-        FALL_ACCELERATION = 0.02,
-        MAX_X = 1,
-        MAX_Y = 5;
+    var X_ACCELERATION = 0.05,
+        Y_ACCELERATION = 0.005,
+        MAX_X = 0.5,
+        MAX_Y = 0.8;
 
     // OBJECTS
     var $game = null,
@@ -75,7 +78,6 @@
     }
 
     function render() {
-        renderLog('x: ' + player.pos.x.toFixed(2) + ' / y: ' + player.pos.y.toFixed(2));
         $player.css({
             left: '' + (player.pos.x) + 'px',
             bottom: '' + (player.pos.y) + 'px'
@@ -98,41 +100,43 @@
 
         _.forEach(pressedKeys, function (key) {
             switch (key) {
+                case RIGHT_ARROW:
                 case RIGHT:
-                    player.velocity.x = Math.min(player.velocity.x + ACCELERATION * delta, MAX_X);
+                    player.velocity.x = Math.min(player.velocity.x + X_ACCELERATION * delta, MAX_X);
                     movingX = true;
                     break;
+                case LEFT_ARROW:
                 case LEFT:
-                    player.velocity.x = Math.max(player.velocity.x - ACCELERATION * delta, -MAX_X);
+                    player.velocity.x = Math.max(player.velocity.x - X_ACCELERATION * delta, -MAX_X);
                     movingX = true;
                     break;
+                case UP_ARROW:
                 case UP:
-                case JUMP:
+                case SPACE:
                     if (!player.falling && player.velocity.y < MAX_Y) {
-                        player.velocity.y = Math.min(player.velocity.y + ACCELERATION * delta, MAX_Y);
+                        player.velocity.y = Math.min(player.velocity.y + Y_ACCELERATION * delta, MAX_Y);
                         jumping = true;
                     } else {
                         player.falling = true;
-                        _.remove(pressedKeys, function (k) { return k === UP || k === JUMP });
+                        _.remove(pressedKeys, function (k) { return k === UP || k === SPACE || k === UP_ARROW });
                     }
                     break;
                 default:
+                    // should not be required, but for sanity reasons remove any unused keys
                     _.remove(pressedKeys, function(k) { return k === key })
             }
         });
 
-        if (pressedKeys.length || player.falling) {
-            if (!movingX) {
-                player.velocity.x = 0;
-            }
+        if (!movingX) {
+            player.velocity.x = 0;
+        }
 
-            if (player.velocity.y > 0 && !jumping) {
-                player.falling = true;
-            }
+        if (player.velocity.y > 0 && !jumping) {
+            player.falling = true;
+        }
 
-            if (player.falling) {
-                player.velocity.y = Math.max(player.velocity.y - FALL_ACCELERATION * delta, -MAX_Y);
-            }
+        if (player.falling) {
+            player.velocity.y = Math.max(player.velocity.y - Y_ACCELERATION * delta, -MAX_Y);
         }
 
         move(delta);
