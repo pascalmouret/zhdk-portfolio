@@ -3,6 +3,31 @@
 @floor_height: 128px;
 @box-height: 100px;
 
+
+// vendor keyframes
+.keyframes(@name,@rules) {
+
+  @-webkit-keyframes @name {
+    @rules();
+  }
+
+  @-moz-keyframes @name {
+    @rules();
+  }
+
+  @-ms-keyframes @name {
+    @rules();
+  }
+
+  @-o-keyframes @name {
+    @rules();
+  }
+
+  @keyframes @name {
+    @rules();
+  }
+}
+
 body, html {
   height: 100%;
   margin: 0;
@@ -55,13 +80,48 @@ body, html {
   }
 
   #player {
-    background-color: red;
     position: absolute;
     bottom: 200px;
     left: 200px;
     height: 100px;
-    width: 50px;
+    width: 68px;
     z-index: 0;
+
+    &.idle {
+      background-image: url('art/char/char1.png');
+    }
+
+    &.jumping {
+      background-image: url('art/char/char2.png');
+    }
+
+    &.falling {
+      background-image: url('art/char/char3.png');
+    }
+
+    .keyframes(walking, {
+      0%, 100% {
+        background-image: url('art/char/char4.png');
+      }
+      25% {
+        background-image: url('art/char/char5.png');
+      }
+      50% {
+        background-image: url('art/char/char6.png');
+      }
+      75% {
+        background-image: url('art/char/char7.png');
+      }
+    });
+
+    &.forwards {
+      animation: walking 0.5s linear 0s infinite;
+    }
+
+    &.backwards {
+      transform: scaleX(-1);
+      animation: walking 0.5s linear 0s infinite;
+    }
   }
 
   #overlay {

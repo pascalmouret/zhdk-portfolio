@@ -19,7 +19,7 @@
     // PHYSICS
     var X_ACCELERATION = 0.05,
         Y_ACCELERATION = 0.005,
-        MAX_X = 0.5,
+        MAX_X = 0.3,
         MAX_Y = 0.8;
 
     // OBJECTS
@@ -99,7 +99,25 @@
             left: '' + (player.pos.x) + 'px',
             bottom: '' + (player.pos.y) + 'px'
         });
+        var animationClass = getAnimationClass();
+        if (!$player.hasClass(animationClass)) {
+            $player.attr('class', animationClass);
+        }
         renderDebug();
+    }
+
+    function getAnimationClass() {
+        if (player.velocity.y > 0) {
+            return 'jumping';
+        } else if (player.velocity.y < 0) {
+            return 'falling';
+        } else if (player.velocity.x > 0) {
+            return 'forwards';
+        } else if (player.velocity.x < 0) {
+            return 'backwards';
+        } else {
+            return 'idle';
+        }
     }
 
     function renderDebug() {
