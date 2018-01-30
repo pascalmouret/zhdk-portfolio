@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Portfolio Pascal Mouret</title>
+    <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/8bit-wonder" type="text/css"/>
     <link rel="stylesheet" href="style.css">
     <script src="lib.js"></script>
 </head>
@@ -12,11 +13,18 @@
         <div id="floor"></div>
         <div id="player"></div>
         <div id="debug"></div>
+        <div id="overlay">
+            <iframe src="pages/throw-it-back.html"></iframe>
+        </div>
     </div>
     <script src="main.js"></script>
     <script>
         $(document).ready(function () {
-            Game($('#game'));
+            Game($('#game'), [
+                "pages/throw-it-back.html",
+                "pages/throw-it-back.html",
+                "pages/throw-it-back.html"
+            ]);
         });
     </script>
 </body>

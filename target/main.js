@@ -54,6 +54,7 @@
 
     // DIMENSIONS
     var FLOOR = null,
+        BOX_HEIGHT = 100,
         VIEWPORT = { x: 0, y: 0};
 
     // PHYSICS
@@ -76,12 +77,15 @@
 
     // MISC
     var debugLog = [],
-        pressedKeys = [];
+        pressedKeys = [],
+        boxUrls = [];
 
-    function init(element) {
+    function init(element, boxes) {
+        boxUrls = boxes;
         initState(element);
         initKeyLogger();
         startGameLoop();
+        spawnBoxes();
     }
 
     function initState(element) {
@@ -108,6 +112,19 @@
         $(document).on('keyup', function (e) {
             _.remove(pressedKeys, function(k) { return k === e.which });
         });
+    }
+
+    function spawnBoxes() {
+        var padding = VIEWPORT.x / (boxUrls.length + 1);
+
+        _.forEach(boxUrls, function (url, i) {
+            var box = $('<div class="box" data-url="' + url +'"></div>');
+            box.css({
+                bottom: '' + (FLOOR + BOX_HEIGHT) + 'px',
+                left: '' + (i + 1) * padding + 'px'
+            });
+            $game.prepend(box);
+        })
     }
 
     function startGameLoop() {
