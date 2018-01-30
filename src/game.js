@@ -18,9 +18,9 @@
 
     // PHYSICS
     var X_ACCELERATION = 0.05,
-        Y_ACCELERATION = 0.005,
-        MAX_X = 0.3,
-        MAX_Y = 0.8;
+        Y_ACCELERATION = 0.0017,
+        MAX_X = 0.15,
+        MAX_Y = 0.2;
 
     // OBJECTS
     var $game = null,
@@ -31,7 +31,10 @@
     var player = {
         velocity: { x: 0, y: 0 },
         pos: { x: 0, y: 0 },
-        falling: false
+        jumping: false,
+        falling: false,
+        facingRight: true,
+        animation: ''
     };
 
     // MISC
@@ -58,11 +61,12 @@
 
         player.pos.y = FLOOR;
         player.pos.x = FLOOR;
+        player.animation = getAnimationClass();
     }
 
     function initKeyLogger() {
         $(document).on('keydown', function (e) {
-            if (!_.some(pressedKeys, function (k) { return k === e.which }) && _.some(FUNCTION_KEYS, function (k) { return k === e.which })) {
+            if (!e.originalEvent.repeat && !_.some(pressedKeys, function (k) { return k === e.which }) && _.some(FUNCTION_KEYS, function (k) { return k === e.which })) {
                 pressedKeys.push(e.which);
                 e.preventDefault();
             }
@@ -87,11 +91,12 @@
     }
 
     function startGameLoop() {
-        GameLoop(render, simulate, 60);
+        GameLoop(render, simulate, 30);
     }
 
     function simulate(delta) {
         handleInput(delta);
+        player.animation = getAnimationClass();
     }
 
     function render() {
@@ -99,25 +104,34 @@
             left: '' + (player.pos.x) + 'px',
             bottom: '' + (player.pos.y) + 'px'
         });
-        var animationClass = getAnimationClass();
-        if (!$player.hasClass(animationClass)) {
-            $player.attr('class', animationClass);
+        if ($player.attr('class') !== player.animation) {
+            $player.attr('class', player.animation);
         }
         renderDebug();
     }
 
     function getAnimationClass() {
-        if (player.velocity.y > 0) {
-            return 'jumping';
-        } else if (player.velocity.y < 0) {
-            return 'falling';
-        } else if (player.velocity.x > 0) {
-            return 'forwards';
-        } else if (player.velocity.x < 0) {
-            return 'backwards';
-        } else {
-            return 'idle';
+        function facingClass() {
+            if (player.facingRight) {
+                return 'right';
+            } else {
+                return 'left';
+            }
         }
+
+        function animationClass() {
+            if (player.velocity.y > 0) {
+                return 'jumping';
+            } else if (player.velocity.y < 0) {
+                return 'falling';
+            } else if (player.velocity.x !== 0) {
+                return 'walking';
+            } else {
+                return 'idle';
+            }
+        }
+
+        return animationClass() + ' ' + facingClass();
     }
 
     function renderDebug() {
@@ -130,19 +144,20 @@
     }
 
     function handleInput(delta) {
-        var movingX = false,
-            jumping = false;
+        var movingX = false;
 
         _.forEach(pressedKeys, function (key) {
             switch (key) {
                 case RIGHT_ARROW:
                 case RIGHT:
                     player.velocity.x = Math.min(player.velocity.x + X_ACCELERATION * delta, MAX_X);
+                    player.facingRight = true;
                     movingX = true;
                     break;
                 case LEFT_ARROW:
                 case LEFT:
                     player.velocity.x = Math.max(player.velocity.x - X_ACCELERATION * delta, -MAX_X);
+                    player.facingRight = false;
                     movingX = true;
                     break;
                 case UP_ARROW:
@@ -150,9 +165,10 @@
                 case SPACE:
                     if (!player.falling && player.velocity.y < MAX_Y) {
                         player.velocity.y = Math.min(player.velocity.y + Y_ACCELERATION * delta, MAX_Y);
-                        jumping = true;
+                        player.jumping = true;
                     } else {
                         player.falling = true;
+                        player.jumping = false;
                         _.remove(pressedKeys, function (k) { return k === UP || k === SPACE || k === UP_ARROW });
                     }
                     break;
@@ -166,8 +182,9 @@
             player.velocity.x = 0;
         }
 
-        if (player.velocity.y > 0 && !jumping) {
+        if (player.velocity.y > 0 && !player.jumping) {
             player.falling = true;
+            player.jumping = false;
         }
 
         if (player.falling) {

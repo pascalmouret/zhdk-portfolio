@@ -99,28 +99,23 @@ body, html {
       background-image: url('art/char/char3.png');
     }
 
-    .keyframes(walking, {
-      0%, 100% {
-        background-image: url('art/char/char4.png');
-      }
-      25% {
-        background-image: url('art/char/char5.png');
-      }
-      50% {
-        background-image: url('art/char/char6.png');
-      }
-      75% {
-        background-image: url('art/char/char7.png');
-      }
-    });
-
-    &.forwards {
+    &.walking {
+      .keyframes(walking, {
+        0% {
+          background-image: url('art/char/char4.png');
+        }
+        33% {
+          background-image: url('art/char/char5.png');
+        }
+        66% {
+          background-image: url('art/char/char6.png');
+        }
+      });
       animation: walking 0.5s linear 0s infinite;
     }
 
-    &.backwards {
+    &.left {
       transform: scaleX(-1);
-      animation: walking 0.5s linear 0s infinite;
     }
   }
 
