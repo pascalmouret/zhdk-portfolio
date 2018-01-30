@@ -89,7 +89,7 @@
         $player = $game.find('#player');
         $debug = $game.find('#debug');
 
-        FLOOR = $game.find('#floor').height();
+        FLOOR = $game.find('#floor').height() / 2;
         VIEWPORT.x = $game.width();
         VIEWPORT.y = $game.height();
 
