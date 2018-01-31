@@ -13,7 +13,7 @@
 
     // DIMENSIONS
     var FLOOR = null,
-        BOX_HEIGHT = 100,
+        BOX_HEIGHT = 120,
         VIEWPORT = { x: 0, y: 0};
 
     // PHYSICS
@@ -25,7 +25,8 @@
     // OBJECTS
     var $game = null,
         $player = null,
-        $debug = null;
+        $debug = null,
+        $iframe = null;
 
     // PLAYER DATA
     var player = {
@@ -40,20 +41,20 @@
     // MISC
     var debugLog = [],
         pressedKeys = [],
-        boxUrls = [];
+        boxes = [];
 
     function init(element, boxes) {
-        boxUrls = boxes;
         initState(element);
         initKeyLogger();
         startGameLoop();
-        spawnBoxes();
+        spawnBoxes(boxes);
     }
 
     function initState(element) {
         $game = $(element);
         $player = $game.find('#player');
         $debug = $game.find('#debug');
+        $iframe = $game.find('iframe');
 
         FLOOR = $game.find('#floor').height() / 2;
         VIEWPORT.x = $game.width();
@@ -77,7 +78,7 @@
         });
     }
 
-    function spawnBoxes() {
+    function spawnBoxes(boxUrls) {
         var padding = VIEWPORT.x / (boxUrls.length + 1);
 
         _.forEach(boxUrls, function (url, i) {
@@ -87,6 +88,7 @@
                 left: '' + (i + 1) * padding + 'px'
             });
             $game.prepend(box);
+            boxes.push(box);
         })
     }
 
@@ -96,6 +98,7 @@
 
     function simulate(delta) {
         handleInput(delta);
+        checkBoxCollisions();
         player.animation = getAnimationClass();
     }
 
@@ -207,6 +210,49 @@
 
     function clampBetween(num, min, max) {
         return Math.min(Math.max(num, min), max);
+    }
+
+    function checkBoxCollisions() {
+        function buildRect(element) {
+            return {
+                x: element.offset().left,
+                y: element.offset().top,
+                height: element.outerHeight(),
+                width: element.outerWidth()
+            }
+        }
+
+        function isColliding(a, b) {
+            return !(
+                ((a.y + a.height) < (b.y)) ||
+                (a.y > (b.y + b.height)) ||
+                ((a.x + a.width) < b.x) ||
+                (a.x > (b.x + b.width))
+            );
+        }
+
+        var playerRect = buildRect($player);
+
+        _.forEach(boxes, function (box) {
+            if (isColliding(playerRect, buildRect(box))) {
+                onBoxCollision(box);
+            }
+        });
+    }
+
+    function onBoxCollision(box) {
+        if (player.velocity.y > 0) {
+            player.velocity.y = 0;
+        }
+        openSite(box);
+    }
+
+    function openSite(box) {
+        var url = box.attr('data-url');
+        if ($iframe.attr('src') !== url) {
+            $iframe.attr('src', url);
+            $iframe[0].contentWindow.location.href = url;
+        }
     }
 
     window.Game = init;
