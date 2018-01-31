@@ -144,7 +144,8 @@
     }
 
     function handleInput(delta) {
-        var movingX = false;
+        var acceleratedX = false,
+            jumped = false;
 
         _.forEach(pressedKeys, function (key) {
             switch (key) {
@@ -152,13 +153,13 @@
                 case RIGHT:
                     player.velocity.x = Math.min(player.velocity.x + X_ACCELERATION * delta, MAX_X);
                     player.facingRight = true;
-                    movingX = true;
+                    acceleratedX = true;
                     break;
                 case LEFT_ARROW:
                 case LEFT:
                     player.velocity.x = Math.max(player.velocity.x - X_ACCELERATION * delta, -MAX_X);
                     player.facingRight = false;
-                    movingX = true;
+                    acceleratedX = true;
                     break;
                 case UP_ARROW:
                 case UP:
@@ -166,6 +167,7 @@
                     if (!player.falling && player.velocity.y < MAX_Y) {
                         player.velocity.y = Math.min(player.velocity.y + Y_ACCELERATION * delta, MAX_Y);
                         player.jumping = true;
+                        jumped = true;
                     } else {
                         player.falling = true;
                         player.jumping = false;
@@ -178,11 +180,11 @@
             }
         });
 
-        if (!movingX) {
+        if (!acceleratedX) {
             player.velocity.x = 0;
         }
 
-        if (player.velocity.y > 0 && !player.jumping) {
+        if (player.velocity.y > 0 && !jumped) {
             player.falling = true;
             player.jumping = false;
         }
