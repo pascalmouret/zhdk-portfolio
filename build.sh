@@ -7,6 +7,6 @@ lessc style/style.less target/style.css
 cat src/lib/*.js > target/lib.js
 cat src/gameloop.js src/game.js > target/main.js
 cp art/misc/*.png target/art/
-cp art/char/*.png target/art/char/
+cp art/char/*.png target/art/
 cp -r pages/ target/pages
 cp index.html target/index.html
