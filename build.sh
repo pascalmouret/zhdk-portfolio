@@ -9,4 +9,5 @@ cat src/gameloop.js src/game.js > target/main.js
 cp art/misc/*.png target/art/
 cp art/char/*.png target/art/
 cp -r pages/ target/pages
+cp -r fonts/ target/fonts
 cp index.html target/index.html

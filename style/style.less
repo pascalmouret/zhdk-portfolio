@@ -3,6 +3,19 @@
 @floor_height: 128px;
 @box-height: 100px;
 
+@font-face {
+  font-family: '8bitWonder';
+  src: url('fonts/8bitwonder.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OldSchoolAdventures';
+  src: url('fonts/oldschooladventures.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 // vendor keyframes
 .keyframes(@name,@rules) {
@@ -32,9 +45,13 @@ body, html {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: '8BITWONDERNominal', serif;
+  font-family: '8bitWonder', sans-serif;
   font-weight: normal;
   font-style: normal;
+
+  p {
+    font-family: 'OldSchoolAdventures', serif;
+  }
 }
 
 #game {
