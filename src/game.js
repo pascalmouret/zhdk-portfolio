@@ -26,7 +26,7 @@
     var $game = null,
         $player = null,
         $debug = null,
-        $iframe = null;
+        $overlay = null;
 
     // PLAYER DATA
     var player = {
@@ -54,7 +54,7 @@
         $game = $(element);
         $player = $game.find('#player');
         $debug = $game.find('#debug');
-        $iframe = $game.find('iframe');
+        $overlay = $game.find('#overlay');
 
         FLOOR = $game.find('#floor').height() / 2;
         VIEWPORT.x = $game.width();
@@ -83,11 +83,13 @@
 
         _.forEach(boxUrls, function (url, i) {
             var box = $('<div class="box" data-url="' + url +'"></div>');
+            var iframe = $('<iframe src="' + url + '" class="inactive"></iframe>');
             box.css({
                 bottom: '' + (FLOOR + BOX_HEIGHT) + 'px',
                 left: '' + (i + 1) * padding + 'px'
             });
             $game.prepend(box);
+            $overlay.append(iframe);
             boxes.push(box);
         })
     }
@@ -248,10 +250,16 @@
     }
 
     function openSite(box) {
-        var url = box.attr('data-url');
-        if ($iframe.attr('src') !== url) {
-            $iframe.attr('src', url);
-            $iframe[0].contentWindow.location.href = url;
+        if (box.attr('data-active') !== 'true') {
+            var url = box.attr('data-url');
+            $game.find('.box[data-active="true"]').attr('data-active', 'false').css({'margin-bottom': '-=10px'});
+            box.attr('data-active', 'true');
+            box.css({'margin-bottom': '-=20px'});
+            box.animate({
+                'margin-bottom': '+=20px'
+            }, 750, 'easeOutElastic');
+            $overlay.find('.active').attr('class', 'inactive');
+            $overlay.find('[src="' + url + '"]').attr('class', 'active');
         }
     }
 
