@@ -82,14 +82,20 @@
         var padding = VIEWPORT.x / (boxUrls.length + 1);
 
         _.forEach(boxUrls, function (url, i) {
-            var box = $('<div class="box" data-url="' + url +'"></div>');
-            var iframe = $('<iframe src="' + url + '" class="inactive"></iframe>');
+            var box = $('<div class="box" data-url="' + url +'"></div>'),
+                iframe = $('<iframe src="' + url + '" class="inactive"></iframe>'),
+                pointer = $('<div class="pointer" data-url="' + url + '"></div>');
+            $overlay.append(iframe);
             box.css({
                 bottom: '' + (FLOOR + BOX_HEIGHT) + 'px',
                 left: '' + (i + 1) * padding + 'px'
             });
             $game.prepend(box);
-            $overlay.append(iframe);
+            pointer.css({
+                bottom: '' + (FLOOR + BOX_HEIGHT + box.height() + 2) + 'px',
+                left: '' + ((i + 1) * padding + box.width() / 2 - 10) + 'px'
+            });
+            $game.append(pointer);
             boxes.push(box);
         })
     }
@@ -258,8 +264,10 @@
             box.animate({
                 'margin-bottom': '+=20px'
             }, 750, 'easeOutElastic');
-            $overlay.find('.active').attr('class', 'inactive');
-            $overlay.find('[src="' + url + '"]').attr('class', 'active');
+            $game.find('.pointer.active').removeClass('active');
+            $game.find('.pointer[data-url="' + url + '"]').addClass('active');
+            $overlay.find('.active').attr('class', '');
+            $overlay.find('[src="' + url + '"]').addClass('active');
         }
     }
 
