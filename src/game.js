@@ -249,25 +249,21 @@
     }
 
     function onBoxCollision(box) {
-        if (player.velocity.y > 0) {
-            player.velocity.y = 0;
-        }
-        openSite(box);
-    }
-
-    function openSite(box) {
         if (box.attr('data-active') !== 'true') {
             var url = box.attr('data-url');
-            $game.find('.box[data-active="true"]').attr('data-active', 'false').css({'margin-bottom': '-=10px'});
+            $game.find('.box[data-active="true"]').attr('data-active', 'false').css({'margin-bottom': '0'});
             box.attr('data-active', 'true');
             box.css({'margin-bottom': '-=20px'});
             box.animate({
                 'margin-bottom': '+=20px'
-            }, 750, 'easeOutElastic');
+            }, 1000, 'easeOutElastic');
             $game.find('.pointer.active').removeClass('active');
             $game.find('.pointer[data-url="' + url + '"]').addClass('active');
             $overlay.find('.active').attr('class', '');
             $overlay.find('[src="' + url + '"]').addClass('active');
+            if (player.velocity.y > 0) {
+                player.velocity.y = 0;
+            }
         }
     }
 
