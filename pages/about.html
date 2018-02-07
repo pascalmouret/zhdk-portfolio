@@ -7,10 +7,46 @@
 </head>
 <body class="page">
     <h1>ZHdK Portfolio Game Design</h1>
-    <h2>von Pascal Mouret</h2>
-    <p>Hier finden Sie eine Auswahl von persönlichen Projekten. Leider gibt es darunter nur ein professionelles Projekt da ich für alles andere durch NDAs gebunden bin.</p>
+    <h2>Pascal Mouret</h2>
+    <p>Willkommen auf meinem Portfolio. Da die meisten meiner professionellen Arbeiten nicht öffentlich zugänglich bin und ich durch NDAs gebunden bin, besteht es zum grössten Teil aus persönlichen Projekten.</p>
+    <p>Der Code kann auf <a href="https://github.com/pascalmouret/zhdk-portfolio" target="_blank">GitHub</a> eingesehen werden.</p>
 
     <h3>Steuerung</h3>
-    <p>Pfeiltasten oder WASD. Leertaste oder "nach oben" ist Springen.</p>
+    <table class="controlls">
+        <tr>
+            <td>
+                ⬅ ➡ A D
+            </td>
+            <td>
+                Bewegen
+            </td>
+        </tr>
+        <tr>
+            <td>
+                ⬆ W Space
+            </td>
+            <td>
+                Springen
+            </td>
+        </tr>
+    </table>
+
+    <h3>Unterlagen</h3>
+    <p>Ich habe hier noch einige Portfolio relevante Unterlagen hinterlegt.</p>
+    <ul>
+        <li><a href="attachments/about/motivation.pdf" target="_blank">Motivationsschreiben</a></li>
+        <li><a href="attachments/about/az_avrios.pdf" target="_blank">AZ Avrios</a></li>
+        <li><a href="attachments/about/az_starmind.pdf" target="_blank">AZ Starmind</a></li>
+        <li><a href="attachments/about/az_divio.pdf" target="_blank">AZ Divio</a></li>
+    </ul>
+
+    <a class="print-view-link" id="print-view-link" href="../pages/about.html" target="_blank">Print View</a>
+    <script>
+        try {
+            if (window.frameElement === null) {
+                document.getElementById("print-view-link").style.display = 'none';
+            }
+        } catch (e) {}
+    </script>
 </body>
 </html>
