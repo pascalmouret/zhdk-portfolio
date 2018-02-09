@@ -48,6 +48,13 @@
         initKeyLogger();
         startGameLoop();
         spawnBoxes(boxes);
+
+        window.onload = function () {
+            startGameLoop();
+            $('#loader-overlay').hide();
+        };
+
+        window.onunload = function () {}; // disable "load" caching
     }
 
     function initState(element) {
@@ -239,13 +246,14 @@
             );
         }
 
-        var playerRect = buildRect($player);
-
-        _.forEach(boxes, function (box) {
-            if (isColliding(playerRect, buildRect(box))) {
-                onBoxCollision(box);
-            }
-        });
+        if (player.velocity.y !== 0) {
+            var playerRect = buildRect($player);
+            _.forEach(boxes, function (box) {
+                if (isColliding(playerRect, buildRect(box))) {
+                    onBoxCollision(box);
+                }
+            });
+        }
     }
 
     function onBoxCollision(box) {
