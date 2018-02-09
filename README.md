@@ -40,3 +40,6 @@ After which you can let `watcher.sh` run in the background:
 
 ### Art
 - Aseprite
+
+## Notes
+Videos are not in the repository because of the (reasonable) 100MB file size limit.
