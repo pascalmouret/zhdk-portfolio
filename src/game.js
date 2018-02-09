@@ -39,9 +39,9 @@
     };
 
     // MISC
-    var debugLog = [],
-        pressedKeys = [],
-        boxes = [];
+    var pressedKeys = [],
+        boxes = [],
+        rect_cache = [];
 
     function init(element, boxes) {
         initState(element);
@@ -104,7 +104,9 @@
             });
             $game.append(pointer);
             boxes.push(box);
-        })
+
+            rect_cache[i] = buildCollisionRect(box);
+        });
     }
 
     function startGameLoop() {
@@ -125,7 +127,6 @@
         if ($player.attr('class') !== player.animation) {
             $player.attr('class', player.animation);
         }
-        renderDebug();
     }
 
     function getAnimationClass() {
@@ -150,15 +151,6 @@
         }
 
         return animationClass() + ' ' + facingClass();
-    }
-
-    function renderDebug() {
-        $debug.html(_.join(debugLog, '<br/>'));
-        debugLog = [];
-    }
-
-    function renderLog(string) {
-        debugLog.push(string);
     }
 
     function handleInput(delta) {
@@ -227,16 +219,16 @@
         return Math.min(Math.max(num, min), max);
     }
 
-    function checkBoxCollisions() {
-        function buildRect(element) {
-            return {
-                x: element.offset().left,
-                y: element.offset().top,
-                height: element.outerHeight(),
-                width: element.outerWidth()
-            }
+    function buildCollisionRect(element) {
+        return {
+            x: element.offset().left,
+            y: element.offset().top,
+            height: element.outerHeight(),
+            width: element.outerWidth()
         }
+    }
 
+    function checkBoxCollisions() {
         function isColliding(a, b) {
             return !(
                 ((a.y + a.height) < (b.y)) ||
@@ -247,9 +239,9 @@
         }
 
         if (player.velocity.y !== 0) {
-            var playerRect = buildRect($player);
-            _.forEach(boxes, function (box) {
-                if (isColliding(playerRect, buildRect(box))) {
+            var playerRect = buildCollisionRect($player);
+            _.forEach(boxes, function (box, index) {
+                if (isColliding(playerRect, rect_cache[index])) {
                     onBoxCollision(box);
                 }
             });
