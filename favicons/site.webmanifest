@@ -1,0 +1,15 @@
+{
+    "name": "ZHdK P.M.",
+    "short_name": "ZHdK P.M.",
+    "icons": [
+        {
+            "src": "android-chrome-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#5fd1ff",
+    "background_color": "#5fd1ff",
+    "start_url": "https://portfolio.mouret.io",
+    "display": "standalone"
+}

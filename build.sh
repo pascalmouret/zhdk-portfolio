@@ -10,4 +10,5 @@ cp art/misc/*.png target/art/
 cp art/char/*.png target/art/
 cp -r pages/ target/pages
 cp -r fonts/ target/fonts
+cp -r favicons/ target/favicons
 cp index.html target/index.html
