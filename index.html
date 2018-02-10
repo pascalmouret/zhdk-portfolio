@@ -19,14 +19,13 @@
         <div id="floor"></div>
         <div id="player"></div>
         <div id="debug"></div>
-        <div id="overlay">
-            <iframe class="active" src="pages/about.html"></iframe>
-        </div>
+        <div id="overlay"></div>
     </div>
     <script src="main.js"></script>
     <script>
         $(document).ready(function () {
             Game($('#game'), [
+                "pages/about.html",
                 "pages/homework.html",
                 "pages/portrait.html",
                 "pages/throw-it-back.html",

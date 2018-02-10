@@ -1,4 +1,4 @@
-@import "lib/typebase.css";
+@import (less) "lib/typebase.css";
 
 @floor_height: 128px;
 @box-height: 100px;
@@ -8,6 +8,7 @@
   src: url('fonts/8bitwonder.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-size: 90%;
 }
 
 // vendor keyframes
@@ -45,6 +46,20 @@ body, html {
   h1, h2, h3, h4, h5 {
     font-family: '8bitWonder', sans-serif;
   }
+
+  h1 {
+    font-size: 4rem;
+    line-height: 4.2rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    line-height: 2.1rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
 }
 
 #game {
@@ -58,6 +73,10 @@ body, html {
     height: 36px;
     background-image: url('art/box.png');
     z-index: 100;
+
+    &.about-box {
+      background-image: url('art/about-box.png');
+    }
   }
 
   #loader-overlay {
@@ -231,10 +250,6 @@ body, html {
   text-align: center;
   height: 95%;
 
-  h3 {
-    margin-top: 3rem;
-  }
-
   ul {
     list-style: none;
     padding: 0 !important;
@@ -242,6 +257,7 @@ body, html {
 
   table {
     margin: 0 auto;
+    margin-top: 1.5rem;
 
     img {
       width: 100%;

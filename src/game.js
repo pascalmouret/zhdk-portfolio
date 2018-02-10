@@ -48,13 +48,24 @@
         initKeyLogger();
         startGameLoop();
         spawnBoxes(boxes);
+        bindAboutLink();
+        setupLoadEvents();
+    }
 
-        window.onload = function () {
+    function setupLoadEvents() {
+        function onLoad() {
             startGameLoop();
             $('#loader-overlay').hide();
-        };
+        }
 
-        window.onunload = function () {}; // disable "load" caching
+        window.onload = onLoad;
+        window.onunload = _.noop; // disable "load" caching
+
+        window.setTimeout(function () {
+            if (document.readyState === 'complete') {
+                onLoad();
+            }
+        });
     }
 
     function initState(element) {
@@ -92,6 +103,11 @@
             var box = $('<div class="box" data-url="' + url +'"></div>'),
                 iframe = $('<iframe src="' + url + '" class="inactive"></iframe>'),
                 pointer = $('<div class="pointer" data-url="' + url + '"></div>');
+
+            if (i === 0) {
+                box.addClass("about-box");
+            }
+
             $overlay.append(iframe);
             box.css({
                 bottom: '' + (FLOOR + BOX_HEIGHT) + 'px',
@@ -107,6 +123,12 @@
 
             rect_cache[i] = buildCollisionRect(box);
         });
+
+        onBoxCollision(boxes[0]);
+    }
+
+    function bindAboutLink() {
+
     }
 
     function startGameLoop() {

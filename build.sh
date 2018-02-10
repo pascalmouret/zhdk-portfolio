@@ -3,7 +3,7 @@ echo "BUILDING PROJECT"
 mkdir -p target
 mkdir -p target/art
 mkdir -p target/art/char
-lessc style/style.less target/style.css
+lessc --strict-imports style/style.less target/style.css
 cat src/lib/*.js > target/lib.js
 cat src/gameloop.js src/game.js > target/main.js
 cp art/misc/*.png target/art/
