@@ -13,14 +13,14 @@
 
     // DIMENSIONS
     var FLOOR = null,
-        BOX_HEIGHT = 120,
+        BOX_HEIGHT = 140,
         VIEWPORT = { x: 0, y: 0};
 
     // PHYSICS
     var X_ACCELERATION = 0.05,
         Y_ACCELERATION = 0.0017,
         MAX_X = 0.15,
-        MAX_Y = 0.2;
+        MAX_Y = 0.25;
 
     // OBJECTS
     var $game = null,
