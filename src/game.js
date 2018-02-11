@@ -20,7 +20,7 @@
     var X_ACCELERATION = 0.05,
         Y_ACCELERATION = 0.0017,
         MAX_X = 0.15,
-        MAX_Y = 0.25;
+        MAX_Y = 0.3;
 
     // OBJECTS
     var $game = null,
